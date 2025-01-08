@@ -1,4 +1,4 @@
-module github.com/hypercodec/vector
+module github.com/hypercodec/vector-go
 
 go 1.23.0
 
