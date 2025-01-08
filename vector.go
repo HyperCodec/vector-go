@@ -14,7 +14,7 @@ import (
 
 	func main() {
 		// create a vector with a capacity of 3 and an allocation amount of 5.
-		v := vector.EmptyVectorWithCapacity(3, 5)
+		v := vector.EmptyWithCapacity(3, 5)
 		v.PushBack(1)
 		v.PushBack(2)
 		v.PushBack(3)
@@ -32,9 +32,9 @@ import (
 )
 
 const (
-	OutOfBounds = "index out of bounds"
+	OutOfBounds        = "index out of bounds"
 	InvalidAllocAmount = "invalid `allocAmount`"
-	CannotAddAmount = "cannot add this amount"
+	CannotAddAmount    = "cannot add this amount"
 )
 
 /*
@@ -54,7 +54,7 @@ Create a `Vector` from a slice with capacity `len(slice)`.
 
 Returns an error if `allocAmount <= 0`.
 */
-func VectorFromSlice[T any](slice []T, allocAmount int) (*Vector[T], error) {
+func FromSlice[T any](slice []T, allocAmount int) (*Vector[T], error) {
 	if allocAmount <= 0 {
 		return nil, errors.New(InvalidAllocAmount)
 	}
@@ -68,7 +68,7 @@ Create an empty `Vector` with a `capacity` of 0.
 
 Returns an error if `allocAmount <= 0`.
 */
-func EmptyVector[T any](allocAmount int) (*Vector[T], error) {
+func Empty[T any](allocAmount int) (*Vector[T], error) {
 	if allocAmount <= 0 {
 		return nil, errors.New(InvalidAllocAmount)
 	}
@@ -81,7 +81,7 @@ Create an empty `Vector` with a specified `capacity`.
 
 Returns an error if `allocAmount <= 0`.
 */
-func EmptyVectorWithCapacity[T any](capacity, allocAmount int) (*Vector[T], error) {
+func EmptyWithCapacity[T any](capacity, allocAmount int) (*Vector[T], error) {
 	if allocAmount <= 0 {
 		return nil, errors.New(InvalidAllocAmount)
 	}
@@ -112,7 +112,7 @@ func (v *Vector[T]) AddCapacity(amount int) error {
 	if amount <= 0 {
 		return errors.New(CannotAddAmount)
 	}
-	
+
 	v.capacity += amount
 
 	newSlice := make([]T, v.capacity)
@@ -124,7 +124,7 @@ func (v *Vector[T]) AddCapacity(amount int) error {
 }
 
 /*
-Appends an item to the end of the `Vector`. Runs in `O(1)` time if there is no allocation. Otherwise takes `O(newCapacity)` time 
+Appends an item to the end of the `Vector`. Runs in `O(1)` time if there is no allocation. Otherwise takes `O(newCapacity)` time
 to copy values to a bigger allocation.
 
 Returns whether an allocation has occurred.
@@ -296,4 +296,30 @@ func (v *Vector[T]) IsInBounds(index int) bool {
 	return index >= 0 && index < v.len
 }
 
-// TODO Find, Contains, maybe RemoveMultiple.
+/*
+Returns the index of the first instance of `val` in `v`. If that value does not exist, it returns -1. Requires the type in the vector to be `comparable`.
+*/
+func Find[T comparable](v *Vector[T], val T) int {
+	for i := range v.len {
+		if v.data[i] == val {
+			return i
+		}
+	}
+
+	return -1
+}
+
+/*
+Returns whether or not the value exists in the vector. Requires the type in the vector to be `comparable“.
+*/
+func Contains[T comparable](v *Vector[T], val T) bool {
+	for i := range v.len {
+		if v.data[i] == val {
+			return true
+		}
+	}
+
+	return false
+}
+
+// TODO maybe RemoveMultiple.
