@@ -31,16 +31,17 @@ func TestIndexFuncs(t *testing.T) {
 
 	// get
 	val, err := v.Get(0)
-	
+
 	assert.Nil(t, err)
-	assert.Equal(t, 5, val)
-	
+	assert.Equal(t, 3, *val)
+
 	val, err = v.Get(2)
 
 	assert.Nil(t, err)
-	assert.Equal(t, 4, val)
+	assert.Equal(t, 4, *val)
 
-	// TODO test index out of bounds errors
+	_, err = v.Get(-1)
+	assert.EqualError(t, err, "index out of bounds")
 }
 
 func TestInsert(t *testing.T) {
@@ -52,11 +53,11 @@ func TestInsert(t *testing.T) {
 	assert.True(t, alloc)
 
 	alloc, err = v.Insert(2, 5)
-	
+
 	assert.Nil(t, err)
 	assert.False(t, alloc)
 
 	_, err = v.Insert(-1, 1)
-	
+
 	assert.EqualError(t, err, "index out of bounds")
 }

@@ -2,13 +2,12 @@ package vector
 
 import (
 	"errors"
-	"slices"
 )
 
 type Vector[T any] struct {
-	data     []T
-	size     int
-	capacity int
+	data        []T
+	size        int
+	capacity    int
 	AllocAmount int
 }
 
@@ -44,7 +43,7 @@ func (v *Vector[T]) AddCapacity(amount int) {
 
 func (v *Vector[T]) Push(val T) bool {
 	allocated := v.size == v.capacity
-	
+
 	if allocated {
 		v.AddCapacity(v.AllocAmount)
 	}
@@ -68,15 +67,27 @@ func (v *Vector[T]) Insert(index int, val T) (bool, error) {
 	if index < 0 || index > v.size {
 		return false, errors.New("index out of bounds")
 	}
-	
+
 	allocated := v.size == v.capacity
 
 	if allocated {
 		v.AddCapacity(v.AllocAmount)
 	}
 
-	v.data = slices.Insert(v.data, index, val)
 	v.size++
+	newData := make([]T, v.capacity)
+
+	i := 0
+	for j := 0; j < v.size; j++ {
+		if j == index {
+			newData[j] = val
+			continue
+		}
+		newData[j] = v.data[i]
+		i++
+	}
+
+	v.data = newData
 
 	return allocated, nil
 }
