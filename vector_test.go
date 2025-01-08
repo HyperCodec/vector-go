@@ -7,18 +7,18 @@ import (
 )
 
 func TestPush(t *testing.T) {
-	v := EmptyVector[int](5)
+	v, _ := EmptyVector[int](5)
 
-	assert.True(t, v.Push(1))
-	assert.False(t, v.Push(2))
-	assert.False(t, v.Push(3))
-	assert.False(t, v.PushBack(4))
+	assert.True(t, v.PushBack(1))
+	assert.False(t, v.PushBack(2))
+	assert.False(t, v.PushBack(3))
+	assert.False(t, v.PushFront(4))
 
 	assert.Equal(t, []int{4, 1, 2, 3, 0}, v.data)
 }
 
 func TestIndexFuncs(t *testing.T) {
-	v := VectorFromSlice([]int{1, 2, 3, 4, 5}, 5)
+	v, _ := VectorFromSlice([]int{1, 2, 3, 4, 5}, 5)
 
 	// set
 	assert.Nil(t, v.Set(0, 3))
@@ -45,7 +45,7 @@ func TestIndexFuncs(t *testing.T) {
 }
 
 func TestInsert(t *testing.T) {
-	v := VectorFromSlice([]int{1, 2, 3}, 5)
+	v, _ := VectorFromSlice([]int{1, 2, 3}, 5)
 
 	alloc, err := v.Insert(1, 4)
 
@@ -62,12 +62,14 @@ func TestInsert(t *testing.T) {
 	assert.EqualError(t, err, "index out of bounds")
 }
 
-func TestMutateData(t *testing.T) {
-	v := VectorFromSlice([]int{1, 2, 3}, 5)
+func TestExtraneousMutate(t *testing.T) {
+	v, _ := VectorFromSlice([]int{1, 2, 3}, 5)
 
 	slice := v.Data()
 
 	slice[0] = 2
 
 	assert.Equal(t, []int{2, 2, 3}, v.data)
+
+	// TODO mutate pointers from Get.
 }
