@@ -16,7 +16,7 @@ jobs:
             - name: "Download Dependencies"
               run: go install
             - name: "Run Unit Tests"
-              run: go test
+              run: go test ./...
 
     lint:
         runs-on: ubuntu-latest
