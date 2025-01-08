@@ -1,28 +1,5 @@
 /*
 A package that adds a variable-length Vector datatype, similar to the Rust implementation.
-
-TODO make sure go actually parses Markdown in docs. Also run doctests or something to make sure this code actually works.
-### Example
-```go
-import (
-
-	"fmt"
-
-	"github.com/HyperCodec/vector-go"
-
-)
-
-	func main() {
-		// create a vector with an initial capacity of 3 and an allocation amount of 5.
-		v := vector.EmptyWithCapacity(3, 5)
-		v.PushBack(1)
-		v.PushBack(2)
-		v.PushBack(3)
-
-		fmt.Println(v.Data())
-	}
-
-```
 */
 package vector
 
