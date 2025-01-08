@@ -61,3 +61,13 @@ func TestInsert(t *testing.T) {
 
 	assert.EqualError(t, err, "index out of bounds")
 }
+
+func TestMutateData(t *testing.T) {
+	v := VectorFromSlice([]int{1, 2, 3}, 5)
+
+	slice := v.Data()
+
+	slice[0] = 2
+
+	assert.Equal(t, []int{2, 2, 3}, v.data)
+}

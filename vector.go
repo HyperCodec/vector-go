@@ -120,3 +120,7 @@ func (v *Vector[T]) SetUnchecked(index int, val T) {
 func (v *Vector[T]) Copy(dst []T) int {
 	return copy(dst, v.data[:v.len])
 }
+
+func (v *Vector[T]) Data() []T {
+	return v.data[:v.len]
+}
