@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPush(t *testing.T) {
+func TestPushRemove(t *testing.T) {
 	v, _ := EmptyVector[int](5)
 
 	assert.True(t, v.PushBack(1))
@@ -14,7 +14,11 @@ func TestPush(t *testing.T) {
 	assert.False(t, v.PushBack(3))
 	assert.False(t, v.PushFront(4))
 
-	assert.Equal(t, []int{4, 1, 2, 3, 0}, v.data)
+	val, err := v.Remove(1)
+	assert.Nil(t, err)
+	assert.Equal(t, 1, *val)
+
+	assert.Equal(t, []int{4, 2, 3, 0}, v.data)
 }
 
 func TestIndexFuncs(t *testing.T) {
@@ -24,8 +28,8 @@ func TestIndexFuncs(t *testing.T) {
 	assert.Nil(t, v.Set(0, 3))
 	assert.Nil(t, v.Set(2, 4))
 
-	assert.EqualError(t, v.Set(-1, 5), "index out of bounds")
-	assert.EqualError(t, v.Set(5, 10), "index out of bounds")
+	assert.EqualError(t, v.Set(-1, 5), OutOfBounds)
+	assert.EqualError(t, v.Set(5, 10), OutOfBounds)
 
 	assert.Equal(t, []int{3, 2, 4, 4, 5}, v.data)
 
@@ -41,7 +45,7 @@ func TestIndexFuncs(t *testing.T) {
 	assert.Equal(t, 4, *val)
 
 	_, err = v.Get(-1)
-	assert.EqualError(t, err, "index out of bounds")
+	assert.EqualError(t, err, OutOfBounds)
 }
 
 func TestInsert(t *testing.T) {
@@ -59,7 +63,7 @@ func TestInsert(t *testing.T) {
 
 	_, err = v.Insert(-1, 1)
 
-	assert.EqualError(t, err, "index out of bounds")
+	assert.EqualError(t, err, OutOfBounds)
 }
 
 func TestExtraneousMutate(t *testing.T) {

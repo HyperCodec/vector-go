@@ -5,26 +5,36 @@ TODO make sure go actually parses Markdown in docs. Also run doctests or somethi
 ### Example
 ```go
 import (
+
 	"fmt"
 
 	"github.com/HyperCodec/vector-go"
+
 )
 
-func main() {
-	// create a vector with a capacity of 3 and an allocation amount of 5.
-	v := vector.EmptyVectorWithCapacity(3, 5)
-	v.PushBack(1)
-	v.PushBack(2)
-	v.PushBack(3)
-	
-	fmt.Println(v.Data())
-}
+	func main() {
+		// create a vector with a capacity of 3 and an allocation amount of 5.
+		v := vector.EmptyVectorWithCapacity(3, 5)
+		v.PushBack(1)
+		v.PushBack(2)
+		v.PushBack(3)
+
+		fmt.Println(v.Data())
+	}
+
 ```
 */
 package vector
 
 import (
 	"errors"
+	"slices"
+)
+
+const (
+	OutOfBounds = "index out of bounds"
+	InvalidAllocAmount = "invalid `allocAmount`"
+	CannotAddAmount = "cannot add this amount"
 )
 
 /*
@@ -46,7 +56,7 @@ Returns an error if `allocAmount <= 0`.
 */
 func VectorFromSlice[T any](slice []T, allocAmount int) (*Vector[T], error) {
 	if allocAmount <= 0 {
-		return nil, errors.New("invalid `allocAmount`")
+		return nil, errors.New(InvalidAllocAmount)
 	}
 
 	size := len(slice)
@@ -60,7 +70,7 @@ Returns an error if `allocAmount <= 0`.
 */
 func EmptyVector[T any](allocAmount int) (*Vector[T], error) {
 	if allocAmount <= 0 {
-		return nil, errors.New("invalid `allocAmount`")
+		return nil, errors.New(InvalidAllocAmount)
 	}
 
 	return &Vector[T]{data: []T{}, len: 0, capacity: 0, AllocAmount: allocAmount}, nil
@@ -73,7 +83,7 @@ Returns an error if `allocAmount <= 0`.
 */
 func EmptyVectorWithCapacity[T any](capacity, allocAmount int) (*Vector[T], error) {
 	if allocAmount <= 0 {
-		return nil, errors.New("invalid `allocAmount`")
+		return nil, errors.New(InvalidAllocAmount)
 	}
 
 	return &Vector[T]{data: make([]T, capacity), len: 0, capacity: capacity, AllocAmount: allocAmount}, nil
@@ -100,7 +110,7 @@ Returns an error if `amount <= 0`.
 */
 func (v *Vector[T]) AddCapacity(amount int) error {
 	if amount <= 0 {
-		return errors.New("cannot add this amount")
+		return errors.New(CannotAddAmount)
 	}
 	
 	v.capacity += amount
@@ -152,8 +162,8 @@ Inserts an element at the index. Takes `O(capacity)` time without an allocation,
 Returns whether an allocation has occurred. Otherwise it returns an error if the index is out of bounds.
 */
 func (v *Vector[T]) Insert(index int, val T) (bool, error) {
-	if index < 0 || index > v.len {
-		return false, errors.New("index out of bounds")
+	if err := v.boundsCheck(index); err != nil {
+		return false, err
 	}
 
 	allocated := v.len == v.capacity
@@ -186,8 +196,8 @@ Gets a pointer to the value at a specified index.
 Returns the pointer to the value. Otherwise it returns an error if the index is out of bounds.
 */
 func (v *Vector[T]) Get(index int) (*T, error) {
-	if index < 0 || index >= v.len {
-		return nil, errors.New("index out of bounds")
+	if err := v.boundsCheck(index); err != nil {
+		return nil, err
 	}
 
 	return &v.data[index], nil
@@ -206,8 +216,8 @@ Sets the value at the specified index.
 Returns an error if the index is out of bounds.
 */
 func (v *Vector[T]) Set(index int, val T) error {
-	if index < 0 || index >= v.len {
-		return errors.New("index out of bounds")
+	if err := v.boundsCheck(index); err != nil {
+		return err
 	}
 
 	v.data[index] = val
@@ -233,10 +243,57 @@ func (v *Vector[T]) Copy(dst []T) int {
 /*
 Get a slice of the data that is within the correct range. Mutating this value will mutate the original `Vector`.
 
-Warning: Do not use this value after modifying the vector elsewhere (especially if an allocation occurs) as it likely will not point to the correct data anymore.
+Warning: Do not use this value after modifying the vector elsewhere (especially if the capacity changes) as it likely will not point to the correct data anymore.
 */
 func (v *Vector[T]) Data() []T {
 	return v.data[:v.len]
 }
 
-// TODO `Remove` method.
+/*
+Removes the value at the specified index.
+
+Returns the removed value. Returns an error if the index is out of bounds.
+*/
+func (v *Vector[T]) Remove(index int) (*T, error) {
+	if err := v.boundsCheck(index); err != nil {
+		return nil, err
+	}
+
+	val := v.data[index]
+
+	v.data = slices.Delete(v.data, index, index+1)
+	v.capacity--
+	v.len--
+
+	return &val, nil
+}
+
+/*
+Removes the value at the specified index and returns it without checking that the index is in bounds (panics if out of bounds).
+*/
+func (v *Vector[T]) RemoveUnchecked(index int) *T {
+	val := v.data[index]
+
+	v.data = slices.Delete(v.data, index, index+1)
+	v.capacity--
+	v.len--
+
+	return &val
+}
+
+func (v *Vector[T]) boundsCheck(index int) error {
+	if !v.IsInBounds(index) {
+		return errors.New("index out of bounds")
+	}
+
+	return nil
+}
+
+/*
+Returns `true` if the index is valid. Returns `false` if using it would return an index out of bounds error.
+*/
+func (v *Vector[T]) IsInBounds(index int) bool {
+	return index >= 0 && index < v.len
+}
+
+// TODO Find, Contains, maybe RemoveMultiple.
