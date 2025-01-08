@@ -27,6 +27,6 @@ jobs:
             - name: "Download Dependencies"
               run: go install
             - name: "Download golangci-lint"
-              run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.63.4 && source ~/.bashrc
+              run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.63.4
             - name: "Lint Package"
               run: golangci-lint
