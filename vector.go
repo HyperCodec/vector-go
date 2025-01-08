@@ -6,26 +6,26 @@ import (
 
 type Vector[T any] struct {
 	data        []T
-	size        int
+	len         int
 	capacity    int
 	AllocAmount int
 }
 
 func VectorFromSlice[T any](slice []T, allocAmount int) *Vector[T] {
 	size := len(slice)
-	return &Vector[T]{data: slice, size: size, capacity: size, AllocAmount: allocAmount}
+	return &Vector[T]{data: slice, len: size, capacity: size, AllocAmount: allocAmount}
 }
 
 func EmptyVector[T any](allocAmount int) *Vector[T] {
-	return &Vector[T]{data: []T{}, size: 0, capacity: 0, AllocAmount: allocAmount}
+	return &Vector[T]{data: []T{}, len: 0, capacity: 0, AllocAmount: allocAmount}
 }
 
 func EmptyVectorWithCapacity[T any](capacity, allocAmount int) *Vector[T] {
-	return &Vector[T]{data: make([]T, capacity), size: 0, capacity: capacity, AllocAmount: allocAmount}
+	return &Vector[T]{data: make([]T, capacity), len: 0, capacity: capacity, AllocAmount: allocAmount}
 }
 
-func (v *Vector[T]) Size() int {
-	return v.size
+func (v *Vector[T]) Len() int {
+	return v.len
 }
 
 func (v *Vector[T]) Capacity() int {
@@ -42,14 +42,14 @@ func (v *Vector[T]) AddCapacity(amount int) {
 }
 
 func (v *Vector[T]) Push(val T) bool {
-	allocated := v.size == v.capacity
+	allocated := v.len == v.capacity
 
 	if allocated {
 		v.AddCapacity(v.AllocAmount)
 	}
 
-	v.data[v.size] = val
-	v.size++
+	v.data[v.len] = val
+	v.len++
 
 	return allocated
 }
@@ -64,21 +64,21 @@ func (v *Vector[T]) PushBack(val T) bool {
 }
 
 func (v *Vector[T]) Insert(index int, val T) (bool, error) {
-	if index < 0 || index > v.size {
+	if index < 0 || index > v.len {
 		return false, errors.New("index out of bounds")
 	}
 
-	allocated := v.size == v.capacity
+	allocated := v.len == v.capacity
 
 	if allocated {
 		v.AddCapacity(v.AllocAmount)
 	}
 
-	v.size++
+	v.len++
 	newData := make([]T, v.capacity)
 
 	i := 0
-	for j := 0; j < v.size; j++ {
+	for j := 0; j < v.len; j++ {
 		if j == index {
 			newData[j] = val
 			continue
@@ -93,7 +93,7 @@ func (v *Vector[T]) Insert(index int, val T) (bool, error) {
 }
 
 func (v *Vector[T]) Get(index int) (*T, error) {
-	if index < 0 || index >= v.size {
+	if index < 0 || index >= v.len {
 		return nil, errors.New("index out of bounds")
 	}
 
@@ -105,7 +105,7 @@ func (v *Vector[T]) GetUnchecked(index int) *T {
 }
 
 func (v *Vector[T]) Set(index int, val T) error {
-	if index < 0 || index >= v.size {
+	if index < 0 || index >= v.len {
 		return errors.New("index out of bounds")
 	}
 
@@ -118,5 +118,5 @@ func (v *Vector[T]) SetUnchecked(index int, val T) {
 }
 
 func (v *Vector[T]) Copy(dst []T) int {
-	return copy(dst, v.data[:v.size])
+	return copy(dst, v.data[:v.len])
 }
