@@ -75,7 +75,13 @@ func TestExtraneousMutate(t *testing.T) {
 
 	assert.Equal(t, []int{2, 2, 3}, v.data)
 
-	// TODO mutate pointers from Get.
+	val, err := v.Get(0)
+
+	assert.Nil(t, err)
+
+	*val = 3
+
+	assert.Equal(t, []int{3, 2, 3}, v.data)
 }
 
 func TestFindContains(t *testing.T) {
