@@ -31,13 +31,13 @@ Create a `Vector` from a slice with capacity `len(slice)`.
 
 Returns an error if `allocAmount <= 0`.
 */
-func FromSlice[T any](slice []T, allocAmount int) (*Vector[T], error) {
+func FromSlice[T any](slice []T, allocAmount int) *Vector[T]{
 	if allocAmount <= 0 {
-		return nil, errors.New(InvalidAllocAmount)
+		panic(InvalidAllocAmount)
 	}
 
 	size := len(slice)
-	return &Vector[T]{data: slice, len: size, capacity: size, allocAmount: allocAmount}, nil
+	return &Vector[T]{data: slice, len: size, capacity: size, allocAmount: allocAmount}
 }
 
 /*
@@ -45,12 +45,12 @@ Create an empty `Vector` with a `capacity` of 0.
 
 Returns an error if `allocAmount <= 0`.
 */
-func Empty[T any](allocAmount int) (*Vector[T], error) {
+func Empty[T any](allocAmount int) *Vector[T] {
 	if allocAmount <= 0 {
-		return nil, errors.New(InvalidAllocAmount)
+		panic(InvalidAllocAmount)
 	}
 
-	return &Vector[T]{data: []T{}, len: 0, capacity: 0, allocAmount: allocAmount}, nil
+	return &Vector[T]{data: []T{}, len: 0, capacity: 0, allocAmount: allocAmount}
 }
 
 /*
@@ -58,12 +58,12 @@ Create an empty `Vector` with a specified `capacity`.
 
 Returns an error if `allocAmount <= 0`.
 */
-func EmptyWithCapacity[T any](capacity, allocAmount int) (*Vector[T], error) {
+func EmptyWithCapacity[T any](capacity, allocAmount int) *Vector[T] {
 	if allocAmount <= 0 {
-		return nil, errors.New(InvalidAllocAmount)
+		panic(InvalidAllocAmount)
 	}
 
-	return &Vector[T]{data: make([]T, capacity), len: 0, capacity: capacity, allocAmount: allocAmount}, nil
+	return &Vector[T]{data: make([]T, capacity), len: 0, capacity: capacity, allocAmount: allocAmount}
 }
 
 /*

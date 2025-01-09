@@ -7,7 +7,7 @@ import (
 )
 
 func TestPushRemove(t *testing.T) {
-	v, _ := Empty[int](5)
+	v := Empty[int](5)
 
 	assert.True(t, v.PushBack(1))
 	assert.False(t, v.PushBack(2))
@@ -22,7 +22,7 @@ func TestPushRemove(t *testing.T) {
 }
 
 func TestIndexFuncs(t *testing.T) {
-	v, _ := FromSlice([]int{1, 2, 3, 4, 5}, 5)
+	v := FromSlice([]int{1, 2, 3, 4, 5}, 5)
 
 	// set
 	assert.Nil(t, v.Set(0, 3))
@@ -49,7 +49,7 @@ func TestIndexFuncs(t *testing.T) {
 }
 
 func TestInsert(t *testing.T) {
-	v, _ := FromSlice([]int{1, 2, 3}, 5)
+	v := FromSlice([]int{1, 2, 3}, 5)
 
 	alloc, err := v.Insert(1, 4)
 
@@ -67,7 +67,7 @@ func TestInsert(t *testing.T) {
 }
 
 func TestExtraneousMutate(t *testing.T) {
-	v, _ := FromSlice([]int{1, 2, 3}, 5)
+	v := FromSlice([]int{1, 2, 3}, 5)
 
 	slice := v.Data()
 
@@ -85,7 +85,7 @@ func TestExtraneousMutate(t *testing.T) {
 }
 
 func TestFindContains(t *testing.T) {
-	v, _ := FromSlice([]int{1, 2, 3}, 5)
+	v := FromSlice([]int{1, 2, 3}, 5)
 
 	assert.False(t, Contains(v, 4))
 	assert.True(t, Contains(v, 3))

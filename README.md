@@ -19,7 +19,7 @@ import (
 
 func main() {
     // create a vector with an initial capacity of 3 and an allocation amount of 5.
-    v, _ := vector.EmptyWithCapacity[int](3, 5)
+    v := vector.EmptyWithCapacity[int](3, 5)
 
     v.PushBack(1)
     v.PushBack(2)
