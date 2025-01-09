@@ -1,4 +1,6 @@
 # vector-go
+[![Go Reference](https://pkg.go.dev/badge/github.com/HyperCodec/vector-go.svg)](https://pkg.go.dev/github.com/HyperCodec/vector-go)
+
 A variable-length collection datatype that allocates as needed. It is based on the Rust implementation and aims to provide an efficient,
 high-level API.
 
