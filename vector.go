@@ -29,7 +29,7 @@ Create a Vector from a slice with capacity len(slice).
 
 Returns an error if allocAmount <= 0.
 */
-func FromSlice[T any](slice []T, allocAmount int) *Vector[T]{
+func FromSlice[T any](slice []T, allocAmount int) *Vector[T] {
 	if allocAmount <= 0 {
 		panic(InvalidAllocAmount)
 	}
