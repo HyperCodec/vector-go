@@ -23,7 +23,7 @@ type Vector[T any] struct {
 	data        []T
 	len         int
 	capacity    int
-	AllocAmount int
+	allocAmount int
 }
 
 /*
@@ -37,7 +37,7 @@ func FromSlice[T any](slice []T, allocAmount int) (*Vector[T], error) {
 	}
 
 	size := len(slice)
-	return &Vector[T]{data: slice, len: size, capacity: size, AllocAmount: allocAmount}, nil
+	return &Vector[T]{data: slice, len: size, capacity: size, allocAmount: allocAmount}, nil
 }
 
 /*
@@ -50,7 +50,7 @@ func Empty[T any](allocAmount int) (*Vector[T], error) {
 		return nil, errors.New(InvalidAllocAmount)
 	}
 
-	return &Vector[T]{data: []T{}, len: 0, capacity: 0, AllocAmount: allocAmount}, nil
+	return &Vector[T]{data: []T{}, len: 0, capacity: 0, allocAmount: allocAmount}, nil
 }
 
 /*
@@ -63,7 +63,7 @@ func EmptyWithCapacity[T any](capacity, allocAmount int) (*Vector[T], error) {
 		return nil, errors.New(InvalidAllocAmount)
 	}
 
-	return &Vector[T]{data: make([]T, capacity), len: 0, capacity: capacity, AllocAmount: allocAmount}, nil
+	return &Vector[T]{data: make([]T, capacity), len: 0, capacity: capacity, allocAmount: allocAmount}, nil
 }
 
 /*
@@ -78,6 +78,28 @@ Get the current capacity of the vector.
 */
 func (v *Vector[T]) Capacity() int {
 	return v.capacity
+}
+
+/*
+Get the current allocation amount.
+*/
+func (v *Vector[T]) AllocAmount() int {
+	return v.allocAmount
+}
+
+/*
+Set the allocation amount to `newVal`.
+
+Returns an error if `newVal <= 0`.
+*/
+func (v *Vector[T]) SetAllocAmount(newVal int) error {
+	if newVal <= 0 {
+		return errors.New(InvalidAllocAmount)
+	}
+
+	v.allocAmount = newVal
+
+	return nil
 }
 
 /*
@@ -110,7 +132,7 @@ func (v *Vector[T]) PushBack(val T) bool {
 	allocated := v.len == v.capacity
 
 	if allocated {
-		v.AddCapacity(v.AllocAmount)
+		_ = v.AddCapacity(v.allocAmount)
 	}
 
 	v.data[v.len] = val
@@ -146,7 +168,7 @@ func (v *Vector[T]) Insert(index int, val T) (bool, error) {
 	allocated := v.len == v.capacity
 
 	if allocated {
-		v.AddCapacity(v.AllocAmount)
+		_ = v.AddCapacity(v.allocAmount)
 	}
 
 	v.len++
